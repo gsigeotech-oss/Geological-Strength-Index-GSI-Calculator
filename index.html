@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geological Strength Index Calculator</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:15px;
+    background:#f3f4f6;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+}
+
+h1,h2,h3{
+    margin-top:0;
+}
+
+.gsi-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+
+.gsi-table td,
+.gsi-table th{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+.structure{
+    text-align:left;
+    font-weight:bold;
+    width:180px;
+}
+
+.vg{background:#d8efd8;}
+.gd{background:#cfe8d1;}
+.fr{background:#f6efb2;}
+.pr{background:#f4d6d6;}
+.vp{background:#eedce8;}
+
+.cell{
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.cell:hover{
+    transform:scale(1.03);
+}
+
+.selected{
+    border:4px solid black !important;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+.big{
+    font-size:72px;
+    text-align:center;
+    font-weight:bold;
+    color:#9b111e;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.result-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.result-table td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#0f172a;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1e293b;
+}
+
+.classification{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.classification th,
+.classification td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+.note{
+    background:#f8fafc;
+    border-left:5px solid #2563eb;
+    padding:15px;
+    margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="gsi-card">
+<div style="text-align:center;">
+</div>
+</div>
+    <h2>PT. Vale Indonesia Tbk</h2>
+    <p>-Mining Center of Excellence-<p>
+    <p>-Geotechnical and Hydrology Engineering-</p>
+    <h2>Geological Strength Index (GSI) Calculator</h2>
+   
+    <p>
+        GSI calculator based on Hoek 1995.
+        (Hoek, Marinos & Benissi Method)
+        <b>Rows</b> = how blocky is the rock mass.<br>
+        <b>Columns</b> = quality of discontinuity surfaces.<br>
+        Click the cell that best describes your site.
+    </p>
+
+    <table class="gsi-table">
+        <tr>
+            <th>Structure ↓ <br> Surface →</th>
+            <th class="vg">VERY GOOD (Fresh rough)</th>
+            <th class="gd">GOOD (Slightly Altered)</th>
+            <th class="fr">FAIR (Smooth, Altered)</th>
+            <th class="pr">POOR (Slickensided)</th>
+            <th class="vp">VERY POOR (Clay/Gouge)</th>
+        </tr>
+
+        <tr>
+            <td><b>INTACT / MASSIVE (No or few joints)</b></td>
+
+            <td class="cell vg" onclick="pick(this,95,'90-100')">
+                90-100<br><b>≈95</b>
+            </td>
+
+            <td class="cell gd" onclick="pick(this,85,'80-90')">
+                80-90<br><b>≈85</b>
+            </td>
+
+            <td class="cell fr" onclick="pick(this,75,'70-80')">
+                70-80<br><b>≈75</b>
+            </td>
+
+            <td class="na">N/A</td>
+            <td class="na">N/A</td>
+        </tr>
+
+        <tr>
+            <td><b>BLOCKY (Well Interlocked, Undisturded)</b></td>
+
+            <td class="cell vg" onclick="pick(this,80,'75-85')">75-85<br><b>≈80</b></td>
+            <td class="cell gd" onclick="pick(this,70,'65-75')">65-75<br><b>≈70</b></td>
+            <td class="cell fr" onclick="pick(this,60,'55-65')">55-65<br><b>≈60</b></td>
+            <td class="cell pr" onclick="pick(this,50,'45-55')">45-55<br><b>≈50</b></td>
+            <td class="cell vp" onclick="pick(this,40,'35-45')">35-45<br><b>≈40</b></td>
+        </tr>
+
+        <tr>
+            <td><b>VERY BLOCKY (Interlocked, Partially Disturbed)</b></td>
+
+            <td class="cell vg" onclick="pick(this,70,'65-75')">65-75<br><b>≈70</b></td>
+            <td class="cell gd" onclick="pick(this,60,'55-65')">55-65<br><b>≈60</b></td>
+            <td class="cell fr" onclick="pick(this,50,'45-55')">45-55<br><b>≈50</b></td>
+            <td class="cell pr" onclick="pick(this,40,'35-45')">35-45<br><b>≈40</b></td>
+            <td class="cell vp" onclick="pick(this,30,'25-35')">25-35<br><b>≈30</b></td>
+        </tr>
+
+        <tr>
+            <td><b>BLOCKY / DISTURBED (Folded, Faulted, Many Joints)</b></td>
+
+            <td class="cell vg" onclick="pick(this,55,'50-60')">50-60<br><b>≈55</b></td>
+            <td class="cell gd" onclick="pick(this,45,'40-50')">40-50<br><b>≈45</b></td>
+            <td class="cell fr" onclick="pick(this,35,'30-40')">30-40<br><b>≈35</b></td>
+            <td class="cell pr" onclick="pick(this,25,'20-30')">20-30<br><b>≈25</b></td>
+            <td class="cell vp" onclick="pick(this,15,'10-20')">10-20<br><b>≈15</b></td>
+        </tr>
+
+        <tr>
+            <td><b>DISINTEGRATED (Heavily Broken, Poor Interlocked)</b></td>
+
+            <td class="na">N/A</td>
+            <td class="cell gd" onclick="pick(this,30,'25-35')">25-35<br><b>≈30</b></td>
+            <td class="cell fr" onclick="pick(this,22,'18-27')">18-27<br><b>≈22</b></td>
+            <td class="cell pr" onclick="pick(this,15,'10-20')">10-20<br><b>≈15</b></td>
+            <td class="cell vp" onclick="pick(this,10,'5-15')">5-15<br><b>≈10</b></td>
+        </tr>
+
+        <tr>
+            <td><b>LAMINATED / SHEARED (Shear Zones, Slikensided)</b></td>
+
+            <td class="na">N/A</td>
+            <td class="na">N/A</td>
+            <td class="cell fr" onclick="pick(this,18,'15-20')">15-20<br><b>≈18</b></td>
+            <td class="cell pr" onclick="pick(this,13,'10-15')">10-15<br><b>≈13</b></td>
+            <td class="cell vp" onclick="pick(this,8,'5-10')">5-10<br><b>≈8</b></td>
+        </tr>
+    </table>
+
+    <div id="result">
+        Select one option only
+    </div>
+</div>
+
+</table>
+
+<h3 id="selectedText">
+Selected : None
+</h3>
+
+</div>
+
+
+<div class="card">
+
+<h3>Fine Tune GSI Manually (Overrides Chart Selection)</h3>
+
+<input type="number" id="manualGSI"
+placeholder="Contoh 65"
+oninput="calculate()">
+
+</div>
+
+<div class="card">
+
+<h3>Disturbance Factor (D)</h3>
+<p>D = 0 for undisturbed rock (TBM, careful blasting). D = 1.0 for heavily blasted slopes. Affects Hoek-Brown mb and s does not change GSI itself.</p>
+<p>D = 0 (TBM)<p>
+<p>D = 0.5 (Mech.)<p>
+<p>D = 0.7 (Ctrl Blast)<p>
+<p>D = 1.0 (Poor Blast)<p>
+
+<input type="range"
+id="D"
+min="0"
+max="1"
+step="0.1"
+value="0.5"
+oninput="updateD()">
+
+<h2 id="Dlabel">0.5</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Intact Rock Constant (MI)</h3>
+Select rock type to auto-fill mi or enter directly. Required to calculate mb = mi x exp((GSI-100)/(28-14D)).
+
+<select id="rockType" onchange="updateMI()">
+
+<option value="0">N/A (0)</option>
+<option value="25">Dunit (25)</option>
+<option value="25">Harzburgit (25)</option>
+<option value="25">Lherzolit (25)</option>
+<option value="25">Wehrlit (25)</option>
+<option value="30">Websterit (30)</option>
+<option value="23">Serpentinit (23)</option>
+<option value="25">Peridotit (25)</option>
+<option value="25">Gabro (27)</option>
+<option value="25">Diabas/Dolerit (25)</option>
+<option value="28">Amfibolit (28)</option>
+<option value="16">Basalt (16)</option>
+<option value="10">Andesit (10)</option>
+<option value="33">Granit (33)</option>
+<option value="29">Granodiorit (29)</option>
+<option value="8">Slate (8)</option>
+<option value="12">Schist/Phyllite (12)</option>
+<option value="28">Gneiss (28)</option>
+<option value="20">Quartzite (20)</option>
+<option value="9">Siltstone/Mudstone (9)</option>
+<option value="9">Dolostone (10)</option>
+<option value="10">Limestone (10)</option>
+<option value="18">Sandstone (18)</option>
+<option value="20">Quartzite (20)</option>
+
+</select>
+
+<br><br>
+MI Value (Editable)
+<input id="miValue" value="30">
+
+
+</div>
+
+<div class="card">
+
+<h2>GSI Classification Table</h2>
+Hoek 1995 - Five rock mass quality classes and engineering significance.
+
+<table class="classification">
+<tr>
+<th>GSI Range</th>
+<th>Quality</th>
+</tr>
+
+<tr>
+<td>75 - 100</td>
+<td>Very Good</td>
+</tr>
+
+<tr>
+<td>55 - 75</td>
+<td>Good</td>
+</tr>
+
+<tr>
+<td>40 - 55</td>
+<td>Fair</td>
+</tr>
+
+<tr>
+<td>25 - 40</td>
+<td>Poor</td>
+</tr>
+
+<tr>
+<td>10 - 25</td>
+<td>Very Poor</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<div class="formula-card">
+    <h3>The Hoek-Brown Formula</h3>
+
+    <p>mb = mi × exp((GSI − 100)/(28 − 14D))</p>
+
+    <p>s = exp((GSI − 100)/(9 − 3D))</p>
+
+    <p>a = 0.5 + ⅙ × (e<sup>−GSI/15</sup> − e<sup>−20/3</sup>)</p>
+
+    <p>Rock Mass UCS: σcm = σci × s<sup>a</sup> (σci = Intact UCS)</p>
+    
+    </table>
+    
+</div>
+
+<div class="card">
+
+<h2>GSI Results</h2>
+
+<div class="big" id="gsiOutput">0</div>
+
+<div class="subtitle" id="quality">
+Waiting Input
+</div>
+
+<br>
+
+<table class="result-table">
+
+<tr>
+<td>GSI</td>
+<td id="resGSI">0</td>
+</tr>
+
+<tr>
+<td>mi</td>
+<td id="resMI">0</td>
+</tr>
+
+<tr>
+<td>mb</td>
+<td id="resMB">0</td>
+</tr>
+
+<tr>
+<td>s</td>
+<td id="resS">0</td>
+</tr>
+
+<tr>
+<td>a</td>
+<td id="resA">0</td>
+</tr>
+
+<tr>
+<td>σcm/σci</td>
+<td id="resOCM">0</td>
+</tr>
+
+<tr>
+<td>D</td>
+<td id="resD">0</td>
+</tr>
+
+</table>
+
+<div class="note" id="engNote">
+Engineering Note
+</div>
+
+<br>
+
+<button onclick="resetAll()">RESET</button>
+
+<br><br>
+
+<button onclick="window.print()">
+📄 EXPORT PDF
+</button>
+
+
+</div>
+
+</div>
+
+<script>
+
+let selectedGSI=0;
+
+function pick(el,gsi,structure,surface){
+
+document.querySelectorAll('.cell').forEach(
+x=>x.classList.remove('selected')
+);
+
+el.classList.add('selected');
+
+selectedGSI=gsi;
+
+document.getElementById("selectedText").innerHTML=
+"Selected : "+structure+" / "+surface+
+" → GSI ≈ "+gsi;
+
+calculate();
+}
+
+function updateMI(){
+document.getElementById("miValue").value=
+document.getElementById("rockType").value;
+
+calculate();
+}
+
+function updateD(){
+document.getElementById("Dlabel").innerHTML=
+document.getElementById("D").value;
+
+calculate();
+}
+
+function classify(gsi){
+
+if(gsi>=75) return "Very Good Rock Mass";
+if(gsi>=55) return "Good Rock Mass";
+if(gsi>=40) return "Fair Rock Mass";
+if(gsi>=25) return "Poor Rock Mass";
+
+return "Very Poor Rock Mass";
+}
+
+function note(gsi){
+
+if(gsi>=75)
+return "High strength rock mass. Tunnel often self supporting.";
+
+if(gsi>=55)
+return "Moderate support required. Rock bolts and shotcrete generally sufficient.";
+
+if(gsi>=40)
+return "Significant support recommended.";
+
+if(gsi>=25)
+return "Heavy support required. Monitoring recommended.";
+
+return "Very heavy support. Face support, grouting and forepoling may be required.";
+}
+
+function calculate(){
+
+let gsi=selectedGSI;
+
+let manual=document.getElementById("manualGSI").value;
+
+if(manual!=""){
+gsi=parseFloat(manual);
+}
+
+if(gsi<=0){
+return;
+}
+
+let D=
+parseFloat(document.getElementById("D").value);
+
+let mi=
+parseFloat(document.getElementById("miValue").value);
+
+let mb=
+mi*Math.exp(
+(gsi-100)/(28-14*D)
+);
+
+let s=
+Math.exp(
+(gsi-100)/(9-3*D)
+);
+
+let a=
+0.5+
+(1/6)*
+(
+Math.exp(-gsi/15)-
+Math.exp(-20/3)
+);
+
+let ocm=
+Math.pow(s,a);
+
+document.getElementById("gsiOutput").innerHTML=gsi;
+
+document.getElementById("quality").innerHTML=
+classify(gsi);
+
+document.getElementById("resGSI").innerHTML=
+gsi.toFixed(0);
+
+document.getElementById("resMI").innerHTML=
+mi.toFixed(2);
+
+document.getElementById("resMB").innerHTML=
+mb.toFixed(4);
+
+document.getElementById("resS").innerHTML=
+s.toFixed(6);
+
+document.getElementById("resA").innerHTML=
+a.toFixed(4);
+
+document.getElementById("resOCM").innerHTML=
+ocm.toFixed(6);
+
+document.getElementById("resD").innerHTML=
+D.toFixed(1);
+
+document.getElementById("engNote").innerHTML=
+note(gsi);
+
+}
+
+function resetAll(){
+
+location.reload();
+
+}
+function downloadPDF(){
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text("PT Vale Indonesia Tbk",20,20);
+
+    doc.setFontSize(12);
+    doc.text("Geological Strength Index Report",20,30);
+
+    doc.text("GSI : " + document.getElementById("resGSI").innerHTML,20,50);
+    doc.text("mi : " + document.getElementById("resMI").innerHTML,20,60);
+    doc.text("mb : " + document.getElementById("resMB").innerHTML,20,70);
+    doc.text("s : " + document.getElementById("resS").innerHTML,20,80);
+    doc.text("a : " + document.getElementById("resA").innerHTML,20,90);
+    doc.text("OCM : " + document.getElementById("resOCM").innerHTML,20,100);
+    doc.text("D : " + document.getElementById("resD").innerHTML,20,110);
+
+    doc.text("Quality : " + document.getElementById("quality").innerHTML,20,130);
+
+    const note = document.getElementById("engNote").innerHTML;
+
+    doc.text("Engineering Note:",20,150);
+    doc.text(note,20,160);
+
+    doc.save("GSI_Report.pdf");
+}
+function downloadPDF(){
+
+    if(typeof window.jspdf === "undefined"){
+        alert("jsPDF tidak termuat");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("GSI REPORT",20,20);
+    doc.text(
+        "GSI : " +
+        document.getElementById("resGSI").innerHTML,
+        20,
+        40
+    );
+
+    doc.save("GSI_Report.pdf");
+}
+
+updateMI();
+
+</script>
+
+</body>
+</html>
